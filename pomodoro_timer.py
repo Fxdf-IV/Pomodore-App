@@ -161,11 +161,13 @@ class MainInterfaceWindow:
         # Recebe todo retorno da classe PomodoroTimer (iniciando o timer)
         self.pomodoro = PomodoroTimer()
 
+        self.current_value = 0
+
         # Entrada personalizada "Pomodoro Flexível"
-        self.work_time_entry = tk.Entry(root)
-        self.shor_break_entry = tk.Entry(root)
-        self.long_break_entry = tk.Entry(root)
-        self.cycles_entry = tk.Entry(root)
+        self.work_time_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
+        self.shor_break_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
+        self.long_break_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
+        self.cycles_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
 
         self.pomodoro.set_option_values(self.work_time_entry, self.shor_break_entry, self.long_break_entry, self.cycles_entry)
 
@@ -224,12 +226,6 @@ class MainInterfaceWindow:
         self.long_break_entry.pack(pady=5)
         self.text4.pack(pady=7)
         self.cycles_entry.pack(pady=5)
-        # self.pomodoro.set_option_values(
-        #     int(self.work_time_entry.get()),
-        #     int(self.shor_break_entry.get()),
-        #     int(self.long_break_entry.get()),
-        #     int(self.cycles_entry.get())
-        # )
 
     def hide_custom_entries(self):
         self.work_time_entry.pack_forget()
@@ -243,6 +239,7 @@ class MainInterfaceWindow:
     
     # Mostra ou oculta entradas baseadas na técnica selecionada.    
     def on_option_change(self, value):
+        self.current_value = value
         self.verify_custom_option(value)
         self.pomodoro.set_timer(int(value))
         self.update_timer_display()
@@ -255,6 +252,7 @@ class MainInterfaceWindow:
 
     def verify_custom_option(self, value):
         if value == 6:                          # Se a técnica selecionada for "Pomodoro Flexível"
+            self.fill_entry_values()
             self.show_custom_entries()          # Mostra os campos de entrada
         else:
             self.hide_custom_entries()          # Oculta os campos de entrada
@@ -276,17 +274,27 @@ class MainInterfaceWindow:
         description = self.pomodoro.set_timer(option)
         messagebox.showinfo("Descrição: ", description) 
 
-    def start_timer_interface(self):
-        if not self.pomodoro.timer_running:         # Inicia o cronômetro apenas se não estiver rodando
+    def start_timer_interface(self,):
+        if not self.pomodoro.timer_running:             # Inicia o cronômetro apenas se não estiver rodando
+            if self.current_value == 6 :
+                self.fill_entry_values()
             self.pomodoro.start_timer()
             self.update_timer_display()
+
+    def fill_entry_values(self):
+         self.update_timer_display()
+         self.pomodoro.set_option_values(
+            int(self.work_time_entry.get()),
+            int(self.shor_break_entry.get()),
+            int(self.long_break_entry.get()),
+            int(self.cycles_entry.get())
+        )
 
     def pause_timer_interface(self):
         self.pomodoro.pause_timer()
 
     def stop_timer_interface(self):
         self.pomodoro.stop_timer()
-        self.reset_display_interface()
         self.update_timer_display()
 
     def update_timer_display(self):
