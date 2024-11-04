@@ -276,7 +276,7 @@ class MainInterfaceWindow:
 
     def start_timer_interface(self,):
         if not self.pomodoro.timer_running:             # Inicia o cronômetro apenas se não estiver rodando
-            if self.current_value == 6 :
+            if self.current_value == 6 and self.pomodoro.current_time == 0:
                 self.fill_entry_values()
             self.pomodoro.start_timer()
             self.update_timer_display()
