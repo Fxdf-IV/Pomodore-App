@@ -188,13 +188,9 @@ class MainInterfaceWindow:
         self.mensage.pack(pady=10)
 
         self.text1 = tk.Label(root, text= "Tempo de foco", font=("Helvetica", 7))
-        self.text1.pack(pady=7)
         self.text2 = tk.Label(root, text= "Pausa curta", font=("Helvetica", 7))
-        self.text2.pack(pady=7)
         self.text3 = tk.Label(root, text= "Pausa longa", font=("Helvetica", 7))
-        self.text3.pack(pady=7)
         self.text4 = tk.Label(root, text= "Ciclos de foco", font=("Helvetica", 7))
-        self.text4.pack(pady=7)
 
         # Botões de controle (Iniciar, Parar e Redefinir)
         self.start_button = tk.Button(root, text="Start", command=self.start_timer_interface)
@@ -220,9 +216,13 @@ class MainInterfaceWindow:
         self.option_menu.pack(pady=20)
  
     def show_custom_entries(self):
+        self.text1.pack(pady=7)
         self.work_time_entry.pack(pady=5)
+        self.text2.pack(pady=7)
         self.shor_break_entry.pack(pady=5)
+        self.text3.pack(pady=7)
         self.long_break_entry.pack(pady=5)
+        self.text4.pack(pady=7)
         self.cycles_entry.pack(pady=5)
         # self.pomodoro.set_option_values(
         #     int(self.work_time_entry.get()),
