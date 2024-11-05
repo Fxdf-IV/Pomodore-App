@@ -129,7 +129,7 @@ class PomodoroTimer:
                 self.work_duration = 52
                 self.short_break_duration = 17
                 self.long_break_duration = 0
-                self.total_cycles = 1
+                self.total_cycles = 0
                 self.description = ("Consiste em 52 minutos de trabalho focado, seguidos de 17 minutos de pausa. É uma técnica popular entre trabalhadores que buscam maximizar a produtividade, permitindo um fluxo de trabalho contínuo sem pausas longas. Tempo de foco: 00:52 (Ciclicamente). Tempo total de descanso: 00h17 (Apenas pausas curtas).")
 
             case 5:
