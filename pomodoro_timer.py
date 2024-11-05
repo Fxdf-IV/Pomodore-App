@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, OptionMenu, Entry, Button
+from tkinter import messagebox, OptionMenu, Button
 
 # Configuração Back-end da janela principal
 class PomodoroTimer:
@@ -284,7 +284,7 @@ class PomodoroTimerUI:
     def check_custom_option(self, value):
         if value == 6:                          # Se a técnica selecionada for "Pomodoro Flexível"
             self.fill_timer_settings_fields()
-            self.display_custom_entries()          # Mostra os campos de entrada
+            self.display_custom_entries()         # Mostra os campos de entrada
         else:
             self.hide_custom_input_fields()          # Oculta os campos de entrada
 
