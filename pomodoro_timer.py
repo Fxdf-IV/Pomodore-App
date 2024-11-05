@@ -271,7 +271,8 @@ class MainInterfaceWindow:
 
     def show_description(self):
         option = self.select_option.get()
-        description = self.pomodoro.set_timer(option)
+        self.pomodoro.set_timer(option)
+        description = self.pomodoro.description
         messagebox.showinfo("Descrição: ", description) 
 
     def start_timer_interface(self,):
