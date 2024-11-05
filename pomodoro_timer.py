@@ -5,10 +5,10 @@ from tkinter import messagebox, OptionMenu, Entry, Button
 class PomodoroTimer:
     def __init__(self):
         # Configurações iniciais do Pomodoro
-        self.work_duration = 0 * 60
-        self.short_break_duration = 0 * 60
-        self.long_break_duration = 0 * 60
-        self.total_cycles = 4 - 1
+        self.work_duration = 0 
+        self.short_break_duration = 0 
+        self.long_break_duration = 0 
+        self.total_cycles = 0
         self.description = ""
         
         self.current_cycle = self.total_cycles
@@ -19,7 +19,6 @@ class PomodoroTimer:
         self.is_timer_running = False             # Controla o estado do timer (False = parado)
         self.current_time = self.work_duration     # Tempo atual (inicia com tempo de foco selecionado)
         self.cycle_message = "Foco total! É hora de trabalhar."
-        print("CICLO INICIAL ", self.current_cycle)
 
     # Converte o tempo de segundos para o formato MM:SS.
     def format_time_to_display(self, total_seconds):
@@ -57,7 +56,7 @@ class PomodoroTimer:
     # Gerencia a mudança entre ciclos de pausas curtas e longas.
     def handle_cycle_switch(self):
 
-        if     self.current_cycle == 0 :
+        if     self.current_cycle == 1 :
                 self.current_time = self.long_break_duration
                 self.cycle_message = "Pausa longa! Descanse bem e recarregue suas energias."
                 self.is_long_break_timer_active = True
@@ -156,7 +155,7 @@ class PomodoroTimerUI:
         # Configuração da janela principal
         self.root = root
         self.root.title("Pomodoro Timer")
-        self.root.geometry("450x700")
+        self.root.geometry("450x825")
 
         # Recebe todo retorno da classe PomodoroTimer (iniciando o timer)
         self.pomodoro = PomodoroTimer()
