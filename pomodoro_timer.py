@@ -334,7 +334,7 @@ class PomodoroTimerUI:
                  self.fill_timer_settings_fields()
                  self.stop_timer_ui()
             except ValueError:
-                messagebox.showerror("Por favor, insira valores válidos.")
+                messagebox.showerror("Erro", "Por favor, insira valores válidos.")
                      
 
     def update_timer_display(self):
