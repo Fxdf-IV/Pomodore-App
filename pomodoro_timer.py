@@ -177,7 +177,9 @@ class PomodoroTimerUI:
         self.long_break_sec_entry.insert(0, "00")
         self.cycles_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
         
-        self.work_sec_entry.bind("<KeyRelease>", self.replace_work_entry_seconds)
+        self.work_sec_entry.bind("<KeyRelease>", self.replace_entry_seconds)
+        self.short_break_sec_entry.bind("<KeyRelease>", self.replace_entry_seconds)
+        self.long_break_sec_entry.bind("<KeyRelease>", self.replace_entry_seconds)
 
         self.work_duration = 0
         self.short_break_duration = 0
@@ -390,30 +392,37 @@ class PomodoroTimerUI:
         self.time_label.config(text=self.pomodoro.format_time_to_display(self.pomodoro.current_time))
         self.title_label.config(text=self.get_title_text())
 
-    def replace_work_entry_seconds(self, event):
-        if int(self.work_sec_entry.get()) > 60 :
-            print(self.work_min_entry)
-            replace_sec = 59
+    # def replace_work_entry_seconds(self, event):
+    #     if int(self.work_sec_entry.get()) > 60 :
+    #         print(self.work_min_entry)
+    #         replace_sec = 59
 
+    #         self.work_sec_entry.delete(0, "end")
+    #         self.work_sec_entry.insert(0, replace_sec)
+
+
+    def replace_entry_seconds(self, event):
+        replace_sec = 59
+
+        if int(self.work_sec_entry.get()) > 60 :
             self.work_sec_entry.delete(0, "end")
             self.work_sec_entry.insert(0, replace_sec)
 
-
-    def replace_short_entry_seconds(self, event):
         if int(self.short_break_sec_entry.get()) > 60 :
-            print(self.short_break_sec_entry)
-            replace_sec = 59
-
             self.short_break_sec_entry.delete(0, "end")
             self.short_break_sec_entry.insert(0, replace_sec)
-    
-    def replace_long_entry_seconds(self, event):
-        if int(self.long_break_sec_entry.get()) > 60 :
-            print(self.long_break_sec_entry)
-            replace_sec = 59
 
+        if int(self.long_break_sec_entry.get()) > 60 :
             self.long_break_sec_entry.delete(0, "end")
             self.long_break_sec_entry.insert(0, replace_sec)
+    
+    # def replace_long_entry_seconds(self, event):
+    #     if int(self.long_break_sec_entry.get()) > 60 :
+    #         print(self.long_break_sec_entry)
+    #         replace_sec = 59
+
+    #         self.long_break_sec_entry.delete(0, "end")
+    #         self.long_break_sec_entry.insert(0, replace_sec)
 
 
 # Criação da janela principal e execução do aplicativo
