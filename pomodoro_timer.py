@@ -176,15 +176,27 @@ class PomodoroTimerUI:
         self.long_break_sec_entry = tk.Entry(root, width=3)
         self.long_break_sec_entry.insert(0, "00")
         self.cycles_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
-        
-        self.work_sec_entry.bind("<KeyRelease>", self.replace_entry_seconds)
-        self.short_break_sec_entry.bind("<KeyRelease>", self.replace_entry_seconds)
-        self.long_break_sec_entry.bind("<KeyRelease>", self.replace_entry_seconds)
 
-        self.work_duration = 0
-        self.short_break_duration = 0
-        self.long_break_duration = 0
-        self.total_cycles = 0
+        self.work_min_entry.bind("<KeyPress>", self.only_number_entry_values)
+        self.work_sec_entry.bind("<KeyPress>", self.only_number_entry_values)
+        self.short_break_min_entry.bind("<KeyPress>", self.only_number_entry_values)
+        self.short_break_sec_entry.bind("<KeyPress>", self.only_number_entry_values)
+        self.long_break_min_entry.bind("<KeyPress>", self.only_number_entry_values)
+        self.long_break_sec_entry.bind("<KeyPress>", self.only_number_entry_values)
+        self.cycles_entry.bind("<KeyPress>", self.only_number_entry_values)
+        
+        self.work_min_entry.bind("<KeyRelease>", self.replace_entry_values)
+        self.work_sec_entry.bind("<KeyRelease>", self.replace_entry_values)
+        self.short_break_min_entry.bind("<KeyRelease>", self.replace_entry_values)
+        self.short_break_sec_entry.bind("<KeyRelease>", self.replace_entry_values)
+        self.long_break_min_entry.bind("<KeyRelease>", self.replace_entry_values)
+        self.long_break_sec_entry.bind("<KeyRelease>", self.replace_entry_values)
+        self.cycles_entry.bind("<KeyRelease>", self.replace_entry_values)
+        
+        self.work_duration = f"{00:02}"
+        self.short_break_duration = f"{00:02}"
+        self.long_break_duration = f"{00:02}"
+        self.total_cycles = f"{00:02}"
 
         self.pomodoro.configure_timer_settings(
             self.work_duration,
@@ -192,8 +204,7 @@ class PomodoroTimerUI:
             self.long_break_duration,
             self.cycles_entry
         )
-            
-
+        
         # Inicializa a seleção do Pomodoro Clássico
         self.current_option_selection = tk.IntVar(value=1)  # Começa com o case 1 selecionado
         self.pomodoro.timer_options(1)  # Aplica a configuração do Pomodoro Clássico
@@ -228,7 +239,6 @@ class PomodoroTimerUI:
         self.reset_button.pack(side=tk.LEFT, padx=10)
 
         self.send_custom_values_button = tk.Button(root, text="Send", command=self.send_custom_values_ui)
-        
 
         # Botão para mostrar descrição da técnica selecionada
         self.show_description_button = Button(self.root, text="Mostrar Descrição", command=self.display_selected_option_description)
@@ -392,38 +402,56 @@ class PomodoroTimerUI:
         self.time_label.config(text=self.pomodoro.format_time_to_display(self.pomodoro.current_time))
         self.title_label.config(text=self.get_title_text())
 
-    # def replace_work_entry_seconds(self, event):
-    #     if int(self.work_sec_entry.get()) > 60 :
-    #         print(self.work_min_entry)
-    #         replace_sec = 59
+    def replace_entry_values(self, event):
+        replace_sec = f"{59:02}"
+        replace_null = f"{00:02}"
 
-    #         self.work_sec_entry.delete(0, "end")
-    #         self.work_sec_entry.insert(0, replace_sec)
-
-
-    def replace_entry_seconds(self, event):
-        replace_sec = 59
-
+        if self.work_min_entry.get() == "" :
+            self.work_min_entry.delete(0, "end")
+            self.work_min_entry.insert(0, replace_null)
+        if int(self.work_min_entry.get()) > 60 :
+            self.work_min_entry.delete(0, "end")
+            self.work_min_entry.insert(0, replace_sec)
+        if self.work_sec_entry.get() == "" :
+            self.work_sec_entry.delete(0, "end")
+            self.work_sec_entry.insert(0, replace_null)
         if int(self.work_sec_entry.get()) > 60 :
             self.work_sec_entry.delete(0, "end")
             self.work_sec_entry.insert(0, replace_sec)
 
+        if self.short_break_min_entry.get() == "" :
+            self.short_break_min_entry.delete(0, "end")
+            self.short_break_min_entry.insert(0, replace_null)
+        if int(self.short_break_min_entry.get()) > 60 :
+            self.short_break_min_entry.delete(0, "end")
+            self.short_break_min_entry.insert(0, replace_sec)
+        if self.short_break_sec_entry.get() == "" :
+            self.short_break_sec_entry.delete(0, "end")
+            self.short_break_sec_entry.insert(0, replace_null)
         if int(self.short_break_sec_entry.get()) > 60 :
             self.short_break_sec_entry.delete(0, "end")
             self.short_break_sec_entry.insert(0, replace_sec)
 
+        if self.long_break_min_entry.get() == "" :
+            self.long_break_min_entry.delete(0, "end")
+            self.long_break_min_entry.insert(0, replace_null)
+        if int(self.long_break_min_entry.get()) > 60 :
+            self.long_break_min_entry.delete(0, "end")
+            self.long_break_min_entry.insert(0, replace_sec)
+        if self.long_break_sec_entry.get() == "" :
+            self.long_break_sec_entry.delete(0, "end")
+            self.long_break_sec_entry.insert(0, replace_null)
         if int(self.long_break_sec_entry.get()) > 60 :
             self.long_break_sec_entry.delete(0, "end")
             self.long_break_sec_entry.insert(0, replace_sec)
-    
-    # def replace_long_entry_seconds(self, event):
-    #     if int(self.long_break_sec_entry.get()) > 60 :
-    #         print(self.long_break_sec_entry)
-    #         replace_sec = 59
 
-    #         self.long_break_sec_entry.delete(0, "end")
-    #         self.long_break_sec_entry.insert(0, replace_sec)
+    def only_number_entry_values(self, event):
 
+        if event.keysym in ["BackSpace", "Delete"]:
+            return
+
+        if not event.char.isdigit():
+            return "break"
 
 # Criação da janela principal e execução do aplicativo
 root = tk.Tk()
