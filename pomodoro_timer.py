@@ -91,11 +91,11 @@ class PomodoroTimer:
                 print("Ciclo atual ", self.current_cycle)
 
     # Chama a entrada do usuário, e armazena os valores retornados
-    def configure_timer_settings(self, work_duration, short_break_duration, long_break_duration, total_cycles):
+    def configure_timer_settings(self, work_duration, short_break_duration, long_break_duration, cycles_entry):
         self.work_duration = work_duration
         self.short_break_duration = short_break_duration
         self.long_break_duration = long_break_duration
-        self.total_cycles = total_cycles
+        self.total_cycles = cycles_entry
     
     def timer_options(self, option):
 
@@ -163,12 +163,32 @@ class PomodoroTimerUI:
         self.selected_option = 0
 
         # Entrada personalizada "Pomodoro Flexível"
-        self.work_time_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
-        self.shor_break_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
-        self.long_break_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
+        self.work_min_entry = tk.Entry(root, width=3)
+        self.work_min_entry.insert(0, "00")
+        self.work_sec_entry = tk.Entry(root, width=3)
+        self.work_sec_entry.insert(0, "00")
+        self.short_break_min_entry = tk.Entry(root, width=3)
+        self.short_break_min_entry.insert(0, "00")
+        self.short_break_sec_entry = tk.Entry(root, width=3)
+        self.short_break_sec_entry.insert(0, "00")
+        self.long_break_min_entry = tk.Entry(root, width=3)
+        self.long_break_min_entry.insert(0, "00")
+        self.long_break_sec_entry = tk.Entry(root, width=3)
+        self.long_break_sec_entry.insert(0, "00")
         self.cycles_entry = tk.Entry(root, textvariable=tk.StringVar(value="0"))
 
-        self.pomodoro.configure_timer_settings(self.work_time_entry, self.shor_break_entry, self.long_break_entry, self.cycles_entry)
+        self.work_duration = 0
+        self.short_break_duration = 0
+        self.long_break_duration = 0
+        self.total_cycles = 0
+
+        self.pomodoro.configure_timer_settings(
+            self.work_duration,
+            self.short_break_duration,
+            self.long_break_duration,
+            self.cycles_entry
+        )
+            
 
         # Inicializa a seleção do Pomodoro Clássico
         self.current_option_selection = tk.IntVar(value=1)  # Começa com o case 1 selecionado
@@ -188,7 +208,7 @@ class PomodoroTimerUI:
         self.message_label = tk.Label(root, text=self.get_cycle_message_text(), font=("Helvetica", 10))
         self.message_label.pack(pady=10)
 
-        self.focus_time_label = tk.Label(root, text= "Tempo de foco", font=("Helvetica", 7))
+        self.work_time_label = tk.Label(root, text= "Tempo de foco", font=("Helvetica", 7))
         self.short_break_label = tk.Label(root, text= "Pausa curta", font=("Helvetica", 7))
         self.long_break_label = tk.Label(root, text= "Pausa longa", font=("Helvetica", 7))
         self.focus_cycles_label = tk.Label(root, text= "Ciclos de foco", font=("Helvetica", 7))
@@ -247,25 +267,39 @@ class PomodoroTimerUI:
         self.pomodoro_option_menu.pack(pady=20)
  
     def display_custom_entries(self):
-        self.focus_time_label.pack(pady=7)
-        self.work_time_entry.pack(pady=5)
+        self.work_time_label.pack(pady=7)
+        self.work_min_entry.pack(pady=5)
+        self.work_sec_entry.pack(pady=5)
+
         self.short_break_label.pack(pady=7)
-        self.shor_break_entry.pack(pady=5)
+        self.short_break_min_entry.pack(pady=5)
+        self.short_break_sec_entry.pack(pady=5)
+        
         self.long_break_label.pack(pady=7)
-        self.long_break_entry.pack(pady=5)
+        self.long_break_min_entry.pack(pady=5)
+        self.long_break_sec_entry.pack(pady=5)
+
         self.focus_cycles_label.pack(pady=7)
         self.cycles_entry.pack(pady=5)
+
         self.send_custom_values_button.pack(side=tk.RIGHT, padx=10)
 
     def hide_custom_input_fields(self):
-        self.work_time_entry.pack_forget()
-        self.shor_break_entry.pack_forget()
-        self.long_break_entry.pack_forget()
-        self.cycles_entry.pack_forget()
-        self.focus_time_label.pack_forget()
+        self.work_time_label.pack_forget()
+        self.work_min_entry.pack_forget()
+        self.work_sec_entry.pack_forget()
+
         self.short_break_label.pack_forget()
+        self.short_break_min_entry.pack_forget()
+        self.short_break_sec_entry.pack_forget()
+
         self.long_break_label.pack_forget()
+        self.long_break_min_entry.pack_forget()
+        self.long_break_sec_entry.pack_forget()
+
         self.focus_cycles_label.pack_forget()
+        self.cycles_entry.pack_forget()
+
         self.send_custom_values_button.pack_forget()
     
     # Mostra ou oculta entradas baseadas na técnica selecionada.    
@@ -307,14 +341,19 @@ class PomodoroTimerUI:
         messagebox.showinfo("Descrição: ", description) 
 
     def fill_timer_settings_fields(self):
-         self.update_timer_display()
-         self.pomodoro.configure_timer_settings(
-            int(self.work_time_entry.get()) * 60,
-            int(self.shor_break_entry.get()) * 60,
-            int(self.long_break_entry.get()) * 60,
-            int(self.cycles_entry.get()))
-        
+        self.update_timer_display()
 
+        self.work_duration = int(self.work_min_entry.get()) * 60 + int(self.work_sec_entry.get())
+        self.short_break_duration = int(self.short_break_min_entry.get()) * 60 + int(self.short_break_sec_entry.get())
+        self.long_break_duration = int(self.long_break_min_entry.get()) * 60 + int(self.long_break_sec_entry.get())
+
+    
+        self.pomodoro.configure_timer_settings(
+            self.work_duration,
+            self.short_break_duration,
+            self.long_break_duration,
+            int(self.cycles_entry.get())
+        )
          
     def start_timer_ui(self,):
         if not self.pomodoro.is_timer_running and self.pomodoro.current_time != 0:  # Inicia o cronômetro apenas se não estiver rodando
@@ -348,6 +387,11 @@ class PomodoroTimerUI:
     def reset_display_interface(self):
         self.time_label.config(text=self.pomodoro.format_time_to_display(self.pomodoro.current_time))
         self.title_label.config(text=self.get_title_text())
+
+    def format_time_to_seconds(self, time_string):
+        minutes, seconds = map(int, time_string.split(":"))
+        total_seconds = minutes * 60 + seconds
+        return total_seconds
 
 # Criação da janela principal e execução do aplicativo
 root = tk.Tk()
