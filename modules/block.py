@@ -4,12 +4,10 @@ import time
 import tkinter as tk
 from tkinter import filedialog
 import psutil
-from pomodoro_timer import PomodoroTimer
 
 class WebsiteBlocker:
     def __init__(self):
         self.hosts_path = self.get_hosts_path()                     # Obtém o caminho do arquivo hosts
-        self.pomodoro_timer = PomodoroTimer()                       # Inicializa o temporizador Pomodoro
         self.redirect = "127.0.0.1"                                 # IP de redirecionamento
         self.browser_choice = None
         self.browser_closed = False
@@ -119,14 +117,7 @@ class WebsiteBlocker:
     
         return variations
     
-    def block_websites(self, sites):
-        self.test_block_unblock = True
-
-        if self.test_block_unblock:                  # Verifica se o temporizador de foco está ativo
-            self.clear_dns_cache()                                     # Limpa o cache DNS
-            self.close_browser()
-            time.sleep(2)         
-
+    def block_websites(self, sites):     
         with open(self.hosts_path, 'r') as file:
             content = file.readlines()
 
@@ -143,11 +134,6 @@ class WebsiteBlocker:
                     else:
                         print(f"Site {variation} já está bloqueado.")
         
-        self.start_browser()
-        
-        if not self.test_block_unblock:
-            self.unblock_websites(sites)
-        
     def unblock_websites(self, sites):
         with open(self.hosts_path, 'r') as file:
             content = file.readlines()
@@ -162,6 +148,3 @@ class WebsiteBlocker:
 
         self.clear_dns_cache()
         print(f"Caminho do navegador: {self.browser_choice}")
-
-blocker = WebsiteBlocker()
-blocker.block_websites(["facebook.com", "x.com", "youtube.com"])      # Arraylist de sites a serem bloqueados

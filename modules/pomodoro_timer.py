@@ -1,4 +1,5 @@
 import time
+from block import WebsiteBlocker
 
 # Configuração Back-end da janela principal
 class PomodoroTimer:
@@ -14,10 +15,24 @@ class PomodoroTimer:
         self.short_break_count = self.total_cycles   
         self.is_short_break_timer_active = False
         self.is_long_break_timer_active = False
-        self.is_focus_timer_active = False
+        self.is_focus_timer_active = True
         self.is_timer_running = False              # Controla o estado do timer (False = parado)
         self.current_time = self.work_duration     # Tempo atual (inicia com tempo de foco selecionado)
         self.cycle_message = "Foco total! É hora de trabalhar."
+
+        self.block = WebsiteBlocker()
+        self.sites = ["facebook.com", "x.com", "youtube.com"]
+    
+    def block_unblock_websites(self):
+        if not self.is_focus_timer_active:
+            self.block.unblock_websites(self.sites)
+
+        else:
+            self.block.clear_dns_cache()
+            self.block.close_browser()
+            time.sleep(1)
+            self.block.block_websites(self.sites)
+            self.block.start_browser()
 
     # Converte o tempo de segundos para o formato MM:SS.
     def format_time_to_display(self, total_seconds):
@@ -37,6 +52,7 @@ class PomodoroTimer:
         if not self.is_timer_running:
             self.is_timer_running = True
             self.update_timer()
+            self.block_unblock_websites()
         
     # Pausa o timer
     def pause_timer(self):
@@ -49,6 +65,7 @@ class PomodoroTimer:
         self.short_break_count = self.total_cycles
         self.is_timer_running = False
         self.current_time = self.work_duration
+        self.block.unblock_websites(self.sites)
         self.cycle_message = "Foco total! É hora de trabalhar."
     
     # Atualiza o tempo restante a cada segundo e gerencia as trocas de ciclos.
@@ -85,6 +102,8 @@ class PomodoroTimer:
                 
         else:
                 self.start_focus_cycle()
+
+        self.block_unblock_websites()
 
     # Gerencia a mudança entre ciclos de foco.
     def start_focus_cycle(self):
@@ -156,3 +175,4 @@ class PomodoroTimer:
         self.current_cycle = self.total_cycles
         self.current_time = self.work_duration  # Atualiza o tempo de trabalho inicial
         self.is_timer_running = False
+
