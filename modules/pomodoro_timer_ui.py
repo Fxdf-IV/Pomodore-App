@@ -11,7 +11,7 @@ class PomodoroTimerUI:
         self.root.geometry("450x825")
 
         # Recebe todo retorno da classe PomodoroTimer (iniciando o timer)
-        self.pomodoro = PomodoroTimer()
+        self.pomodoro_timer = PomodoroTimer()
 
         self.selected_option = 0
         
@@ -22,17 +22,17 @@ class PomodoroTimerUI:
         
         # Inicializa a seleção do Pomodoro Clássico
         self.current_option_selection = tk.IntVar(value=1)  # Começa com o case 1 selecionado
-        self.pomodoro.timer_options(1)  # Aplica a configuração do Pomodoro Clássico
+        self.pomodoro_timer.timer_options(1)  # Aplica a configuração do Pomodoro Clássico
 
         # Elementos da interface gráfica (Título e cronômetro)
         self.label = tk.Label(root, text="Pomodoro Timer", font=("Helvetica", 16))
         self.label.pack(pady=10)
 
         # Exibição do tempo formatado (MM:SS)
-        self.time_label = tk.Label(root, text=self.pomodoro.format_time_to_display(self.pomodoro.current_time), font=("Helvetica", 36))
+        self.time_label = tk.Label(root, text=self.pomodoro_timer.format_time_to_display(self.pomodoro_timer.current_time), font=("Helvetica", 36))
 
         # Exibição do tempo formatado (HH:MM:SS)
-        self.time_custom_label = tk.Label(root, text=self.pomodoro.format_time_to_display_custom(self.pomodoro.current_time), font=("Helvetica", 36))
+        self.time_custom_label = tk.Label(root, text=self.pomodoro_timer.format_time_to_display_custom(self.pomodoro_timer.current_time), font=("Helvetica", 36))
         self.time_custom_label.pack(pady=20)
 
         self.title_label = tk.Label(root, text=self.get_title_text(), font=("Helvetica", 14))
@@ -133,7 +133,7 @@ class PomodoroTimerUI:
         self.long_break_sec_entry.bind("<KeyRelease>", self.replace_entry_values)
         self.cycles_entry.bind("<KeyRelease>", self.replace_entry_values)
     
-        self.pomodoro.configure_timer_settings(
+        self.pomodoro_timer.configure_timer_settings(
             self.work_duration,
             self.short_break_duration,
             self.long_break_duration,
@@ -200,11 +200,11 @@ class PomodoroTimerUI:
     def handle_pomodoro_option_change(self, value):
         self.selected_option = value
         self.check_custom_option(value)
-        self.pomodoro.timer_options(int(value))
+        self.pomodoro_timer.timer_options(int(value))
         self.update_timer_display()
 
         self.trigger_option_change_handler()
-        self.pomodoro.timer_options(value)
+        self.pomodoro_timer.timer_options(value)
         self.reset_display_interface()
         self.message_label.config(text=self.get_cycle_message_text())
 
@@ -217,20 +217,20 @@ class PomodoroTimerUI:
 
     def trigger_option_change_handler(self):
         self.handle_pomodoro_option_change
-        self.pomodoro.configure_timer_settings
+        self.pomodoro_timer.configure_timer_settings
         self.stop_timer_ui()
 
     # Funções que chamam os métodos em PomodoroTimer
     def get_cycle_message_text(self):
-        return self.pomodoro.cycle_message
+        return self.pomodoro_timer.cycle_message
 
     def get_title_text(self):
-        return self.pomodoro.title
+        return self.pomodoro_timer.title
 
     def display_selected_option_description(self):
         option = self.current_option_selection.get()
-        self.pomodoro.timer_options(option)
-        description = self.pomodoro.description
+        self.pomodoro_timer.timer_options(option)
+        description = self.pomodoro_timer.description
         messagebox.showinfo("Descrição: ", description) 
 
     def fill_timer_settings_fields(self):
@@ -240,7 +240,7 @@ class PomodoroTimerUI:
         self.short_break_duration = int(self.short_break_hr_entry.get()) * 3600 + int(self.short_break_min_entry.get()) * 60 + int(self.short_break_sec_entry.get())
         self.long_break_duration = int(self.long_break_hr_entry.get()) * 3600 + int(self.long_break_min_entry.get()) * 60 + int(self.long_break_sec_entry.get())
     
-        self.pomodoro.configure_timer_settings(
+        self.pomodoro_timer.configure_timer_settings(
             self.work_duration,
             self.short_break_duration,
             self.long_break_duration,
@@ -248,15 +248,15 @@ class PomodoroTimerUI:
         )
          
     def start_timer_ui(self,):
-        if not self.pomodoro.is_timer_running and self.pomodoro.current_time != 0:  # Inicia o cronômetro apenas se não estiver rodando
-            self.pomodoro.start_timer()
+        if not self.pomodoro_timer.is_timer_running and self.pomodoro_timer.current_time != 0:  # Inicia o cronômetro apenas se não estiver rodando
+            self.pomodoro_timer.start_timer()
             self.update_timer_display()
 
     def pause_timer_ui(self):
-        self.pomodoro.pause_timer()
+        self.pomodoro_timer.pause_timer()
 
     def stop_timer_ui(self):
-        self.pomodoro.stop_timer()
+        self.pomodoro_timer.stop_timer()
         self.update_timer_display()
 
     def send_custom_values_ui(self):
@@ -272,17 +272,17 @@ class PomodoroTimerUI:
         self.reset_display_interface()
         self.message_label.config(text=self.get_cycle_message_text())
 
-        if  self.pomodoro.is_timer_running:
+        if  self.pomodoro_timer.is_timer_running:
                 self.root.after(1000, self.update_timer_display)         # Chama novamente após 1 segundo
-                self.pomodoro.update_timer()
+                self.pomodoro_timer.update_timer()
 
     def reset_display_interface(self):
         
         if self.selected_option != 6 :
-            self.time_label.config(text=self.pomodoro.format_time_to_display(self.pomodoro.current_time))
+            self.time_label.config(text=self.pomodoro_timer.format_time_to_display(self.pomodoro_timer.current_time))
             self.title_label.config(text=self.get_title_text())
         else:
-            self.time_label.config(text=self.pomodoro.format_time_to_display_custom(self.pomodoro.current_time))
+            self.time_label.config(text=self.pomodoro_timer.format_time_to_display_custom(self.pomodoro_timer.current_time))
             self.title_label.config(text=self.get_title_text())
 
     def replace_entry(self, entry, default_value, replace_value, max_value):

@@ -1,3 +1,5 @@
+import time
+
 # Configuração Back-end da janela principal
 class PomodoroTimer:
     def __init__(self):
@@ -12,7 +14,7 @@ class PomodoroTimer:
         self.short_break_count = self.total_cycles   
         self.is_short_break_timer_active = False
         self.is_long_break_timer_active = False
-        self.is_focus_timer_active = True
+        self.is_focus_timer_active = False
         self.is_timer_running = False             # Controla o estado do timer (False = parado)
         self.current_time = self.work_duration     # Tempo atual (inicia com tempo de foco selecionado)
         self.cycle_message = "Foco total! É hora de trabalhar."
@@ -55,6 +57,7 @@ class PomodoroTimer:
             if self.current_time > 0 :
                 self.current_time -= 1
             else:
+                time.sleep(3)
                 self.handle_cycle_switch()             # Quando o tempo termina, completa o ciclo de foco
 
     # Gerencia a mudança entre ciclos de pausas curtas e longas.
