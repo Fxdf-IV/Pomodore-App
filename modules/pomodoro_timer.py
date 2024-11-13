@@ -15,7 +15,7 @@ class PomodoroTimer:
         self.is_short_break_timer_active = False
         self.is_long_break_timer_active = False
         self.is_focus_timer_active = False
-        self.is_timer_running = False             # Controla o estado do timer (False = parado)
+        self.is_timer_running = False              # Controla o estado do timer (False = parado)
         self.current_time = self.work_duration     # Tempo atual (inicia com tempo de foco selecionado)
         self.cycle_message = "Foco total! É hora de trabalhar."
 

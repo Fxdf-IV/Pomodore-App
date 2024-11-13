@@ -24,7 +24,7 @@ class WebsiteBlocker:
         if os.name == 'posix':                                      # Sistemas Linux ou Mac
             return "/etc/hosts"
 
-    def ask_for_browser(self):                                      # Permite ao usuário escolher o executável do navegador e armazena o caminho
+    def ask_for_browser(self):
         root = tk.Tk()
         root.withdraw()                                             # Não mostrar a janela principal do Tkinter
 
@@ -32,14 +32,14 @@ class WebsiteBlocker:
         browser_path = filedialog.askopenfilename(title="Selecione o navegador", filetypes=[("Arquivos executáveis", "*.exe;*.app;*")])
 
         if browser_path:
-            self.browser_choice = browser_path
+            self.browser_choice = browser_path                      # Armazena o caminho do arquivo do navegador
             print(f"Navegador selecionado: {os.path.basename(self.browser_choice)}")
         else:
             print("Nenhum navegador foi selecionado.")
 
     def generate_browser_variations(self):
         if self.browser_choice:
-            base_name = os.path.basename(self.browser_choice).lower()
+            base_name = os.path.basename(self.browser_choice).lower()       # Obtem o nome do arquivo do navegador a partir do caminho completo
             variations = [base_name]
 
             variations.append(base_name.replace(".exe", ""))
@@ -50,30 +50,27 @@ class WebsiteBlocker:
         return []
 
     def close_browser(self):
-        closed_processes = []  # Lista para armazenar processos já fechados
+        closed_processes = []                                               # Lista para armazenar processos já fechados
 
-        for proc in psutil.process_iter(['pid', 'name']):
-            for variation in self.generate_browser_variations():
+        for proc in psutil.process_iter(['pid', 'name']):                   # Lista os processos em execução no sistema
+            for variation in self.generate_browser_variations():            # Verificar se o nome do processo contém uma das variações geradas
                 if variation in proc.info['name'].lower():
                     try:
-                        # Verifica se o processo já foi fechado
                         if proc.info['pid'] not in closed_processes:
                             print(proc.info)
                             if os.path.basename(self.browser_choice).lower() in proc.info['name'].lower():
                                 print(f"Fechando o processo {proc.info['name']} (PID: {proc.info['pid']})...")
                                 proc.terminate()
                                 proc.wait()
-                                closed_processes.append(proc.info['pid'])  # Marca o processo como fechado
+                                closed_processes.append(proc.info['pid'])   # Marca o processo como fechado
                                 print(f"Navegador {proc.info['name']} fechado com sucesso.")
-                                self.browser_closed = True  # Marca como fechado
+                                self.browser_closed = True                  # Marca como fechado
                         else:
                             print(f"Processo {proc.info['name']} (PID: {proc.info['pid']}) já foi fechado.")
                     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
                         print(f"Erro ao tentar fechar o processo: {e}")
-                        continue
 
     def start_browser(self):
-        try:
             if not os.path.isfile(self.browser_choice):
                 print(f"Erro: O navegador {os.path.basename(self.browser_choice)} não foi encontrado no caminho especificado.")
                 return
@@ -84,15 +81,13 @@ class WebsiteBlocker:
 
             if process.poll() is None:
                 self.browser_closed = False
-                print(f"Navegador {os.path.basename(self.browser_choice)} reiniciado com sucesso.")
+                print(f"Navegador {os.path.basename(self.browser_choice)} reiniciado com sucesso.")\
+                
             else:
                 print(f"Erro ao tentar reiniciar o navegador: {os.path.basename(self.browser_choice)}.")
 
-        except Exception as e:
-            print(f"Ocorreu um erro ao tentar reiniciar o navegador: {e}")
-
-        if not self.browser_closed:
-            print("Navegador não foi fechado corretamente. Não reiniciando.")
+            if not self.browser_closed:
+                print("Navegador não foi fechado corretamente. Não reiniciando.")
     
     def clear_dns_cache(self):
         if os.name == 'nt':     # Windows
@@ -129,6 +124,8 @@ class WebsiteBlocker:
 
         if self.test_block_unblock:                  # Verifica se o temporizador de foco está ativo
             self.clear_dns_cache()                                     # Limpa o cache DNS
+            self.close_browser()
+            time.sleep(2)         
 
         with open(self.hosts_path, 'r') as file:
             content = file.readlines()
@@ -143,11 +140,10 @@ class WebsiteBlocker:
                     if entry not in content:                           # Se a variação ainda não está no arquivo hosts
                         file.write(entry)                              # Adiciona a variação ao arquivo
                         print(f"Site {variation} bloqueado com sucesso.")
-                        self.close_browser()
-                        time.sleep(1)
-                        self.start_browser()
                     else:
                         print(f"Site {variation} já está bloqueado.")
+        
+        self.start_browser()
         
         if not self.test_block_unblock:
             self.unblock_websites(sites)
