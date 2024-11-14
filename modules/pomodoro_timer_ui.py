@@ -242,7 +242,7 @@ class PomodoroTimerUI:
         messagebox.showinfo("Descrição", description)
 
     def open_website_manager(self):
-        WebsiteManagerWindow(self.root, self.pomodoro_timer.sites)
+        website_manager_window = WebsiteManagerWindow(self.root, self.pomodoro_timer.sites, self.pomodoro_timer.website_manager)
 
     def fill_timer_settings_fields(self):
         self.update_timer_display()

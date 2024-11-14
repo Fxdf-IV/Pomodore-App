@@ -21,7 +21,7 @@ class PomodoroTimer:
         self.cycle_message = "Foco total! É hora de trabalhar."
 
         self.website_manager = WebsiteBlocker()
-        self.sites = ["facebook.com", "x.com", "youtube.com"]
+        self.sites = []
     
     def block_unblock_websites(self):
         if not self.is_focus_timer_active:

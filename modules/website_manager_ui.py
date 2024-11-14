@@ -1,15 +1,15 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, font
 import re
-from website_manager import WebsiteBlocker
 
 class WebsiteManagerWindow:
-    def __init__(self, parent, sites_list):
+    def __init__(self, parent, sites_list, website_manager):
         # Configurações iniciais da janela
         self.window = tk.Toplevel(parent)
         self.window.title("Gerenciar Sites Bloqueados")
         self.window.geometry("500x400")
         self.sites_list = sites_list                   # Lista de sites recebida do PomodoroTimer
+        self.website_manager = website_manager         # Usando a instância existente do WebsiteBlocker
         
         # Frame principal para organização dos elementos
         self.main_frame = ttk.Frame(self.window, padding="10")
@@ -27,6 +27,13 @@ class WebsiteManagerWindow:
         ttk.Button(self.button_frame, text="Adicionar", command=self.add_site).pack(side=tk.LEFT, padx=5)
         ttk.Button(self.button_frame, text="Editar", command=self.edit_site).pack(side=tk.LEFT, padx=5)
         ttk.Button(self.button_frame, text="Remover", command=self.remove_site).pack(side=tk.LEFT, padx=5)
+
+        # Frame adicional para o botão do navegador
+        self.browser_frame = ttk.Frame(self.main_frame)
+        self.browser_frame.pack(pady=5)
+        
+        # Botão para selecionar o navegador
+        ttk.Button(self.browser_frame, text="Selecione seu navegador", command=self.website_manager.ask_for_browser).pack(pady=5)
         
         # Carrega a lista inicial de sites
         self.update_sites_list()

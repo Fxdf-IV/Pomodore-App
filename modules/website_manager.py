@@ -13,8 +13,6 @@ class WebsiteBlocker:
         self.browser_closed = False
         self.browser_started = False
 
-        self.ask_for_browser()
-
     def get_hosts_path(self):
         if os.name == 'nt':                                         # Sistema operacional Windows
             return "C:\\Windows\\System32\\drivers\\etc\\hosts"
