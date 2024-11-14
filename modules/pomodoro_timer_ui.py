@@ -334,6 +334,5 @@ class PomodoroTimerUI:
             return "break"
 
     def on_closing(self):
-        """Manipula o evento de fechamento da janela"""
         self.pomodoro_timer.cleanup()
         self.root.destroy()

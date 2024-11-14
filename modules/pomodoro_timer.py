@@ -35,7 +35,6 @@ class PomodoroTimer:
             self.block.start_browser()
 
     def cleanup(self):
-        """Limpa recursos e desbloqueia sites quando o programa é fechado"""
         self.block.unblock_websites(self.sites)
         self.block.clear_dns_cache()
 
