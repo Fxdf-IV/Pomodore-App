@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, OptionMenu, Button
 from pomodoro_timer import PomodoroTimer
+from website_manager import WebsiteManagerWindow
 
 # Configuração Front-end da janela principal
 class PomodoroTimerUI:
@@ -55,6 +56,10 @@ class PomodoroTimerUI:
 
         self.reset_button = tk.Button(root, text="Stop", command=self.stop_timer_ui)
         self.reset_button.pack(side=tk.LEFT, padx=10)
+
+        # Botão para gerenciar sites bloqueados
+        self.manage_sites_button = tk.Button(root, text="Gerenciar Sites", command=self.open_website_manager)
+        self.manage_sites_button.pack(side=tk.LEFT, padx=10)
 
         self.send_custom_values_button = tk.Button(root, text="Send", command=self.send_custom_values_ui)
 
@@ -228,10 +233,10 @@ class PomodoroTimerUI:
         return self.pomodoro_timer.title
 
     def display_selected_option_description(self):
-        option = self.current_option_selection.get()
-        self.pomodoro_timer.timer_options(option)
-        description = self.pomodoro_timer.description
-        messagebox.showinfo("Descrição: ", description) 
+        self.pomodoro_timer.display_selected_option_description(self.current_option_selection.get())
+
+    def open_website_manager(self):
+        WebsiteManagerWindow(self.root, self.pomodoro_timer.sites)
 
     def fill_timer_settings_fields(self):
         self.update_timer_display()
