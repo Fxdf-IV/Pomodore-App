@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, font
 import json
 import re
 import os
@@ -51,12 +51,41 @@ class WebsiteManagerWindow:
         dialog.geometry("300x100")
         
         ttk.Label(dialog, text="URL do site:").pack(pady=5)
-        entry = ttk.Entry(dialog, width=40)
+        
+        # Criando fonte em itálico para o placeholder
+        italic_font = font.Font(family="Helvetica", size=9, slant="italic")
+        
+        # Criando um estilo personalizado para o Entry com placeholder
+        entry = tk.Entry(dialog, width=40, font=italic_font, fg="gray")
         entry.pack(pady=5)
+        
+        # Texto placeholder
+        placeholder = " Insira dessa forma, Ex: instagram.com "
+        entry.insert(0, placeholder)
+        
+        # Função para limpar o placeholder quando o usuário clicar
+        def on_focus_in(event):
+            if entry.get() == placeholder:
+                entry.delete(0, tk.END)
+                entry.config(font=("Helvetica", 9), fg="black")  # Remove o itálico
+                
+        # Função para restaurar o placeholder se o campo estiver vazio
+        def on_focus_out(event):
+            if not entry.get():
+                entry.config(font=italic_font, fg="gray")  # Restaura o itálico
+                entry.insert(0, placeholder)
+        
+        # Vinculando os eventos de foco
+        entry.bind("<FocusIn>", on_focus_in)
+        entry.bind("<FocusOut>", on_focus_out)
         
         # Função interna para salvar o novo site
         def save():
             url = entry.get().strip()
+            if url == placeholder:  # Não salvar se ainda estiver com o placeholder
+                messagebox.showerror("Erro", "Por favor, insira uma URL válida!")
+                return
+                
             if self.is_valid_url(url):                # Valida o formato da URL
                 if url not in self.sites_list:        # Verifica se o site já existe
                     self.sites_list.append(url)
@@ -84,7 +113,7 @@ class WebsiteManagerWindow:
         dialog.geometry("300x100")
         
         ttk.Label(dialog, text="URL do site:").pack(pady=5)
-        entry = ttk.Entry(dialog, width=40)
+        entry = tk.Entry(dialog, width=40)
         entry.insert(0, old_url)                      # Preenche com a URL atual
         entry.pack(pady=5)
         

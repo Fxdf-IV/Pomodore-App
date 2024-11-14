@@ -233,7 +233,10 @@ class PomodoroTimerUI:
         return self.pomodoro_timer.title
 
     def display_selected_option_description(self):
-        self.pomodoro_timer.display_selected_option_description(self.current_option_selection.get())
+        option = self.current_option_selection.get()
+        self.pomodoro_timer.timer_options(option)
+        description = self.pomodoro_timer.description
+        messagebox.showinfo("Descrição", description)
 
     def open_website_manager(self):
         WebsiteManagerWindow(self.root, self.pomodoro_timer.sites)
