@@ -1,5 +1,5 @@
 import time
-from block import WebsiteBlocker
+from website_manager import WebsiteBlocker
 
 # Configuração Back-end da janela principal
 class PomodoroTimer:

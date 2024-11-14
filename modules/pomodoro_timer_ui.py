@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, OptionMenu, Button
 from pomodoro_timer import PomodoroTimer
-from website_manager import WebsiteManagerWindow
+from website_manager_ui import WebsiteManagerWindow
 
 # Configuração Front-end da janela principal
 class PomodoroTimerUI:
