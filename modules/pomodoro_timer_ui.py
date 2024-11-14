@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox, OptionMenu, Button
+from tkinter import messagebox, OptionMenu, Button, filedialog
 from pomodoro_timer import PomodoroTimer
 from website_manager_ui import WebsiteManagerWindow
+import os
 
 # Configuração Front-end da janela principal
 class PomodoroTimerUI:
@@ -16,6 +17,10 @@ class PomodoroTimerUI:
 
         # Configura o evento de fechamento da janela
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        # Verifica se o navegador já está configurado
+        if not self.pomodoro_timer.website_manager.is_browser_set():
+            self.select_browser_on_startup()
 
         self.selected_option = 0
         
@@ -336,3 +341,23 @@ class PomodoroTimerUI:
     def on_closing(self):
         self.pomodoro_timer.cleanup()
         self.root.destroy()
+
+    def select_browser_on_startup(self):
+        browser_path = filedialog.askopenfilename(
+            title="Selecione o navegador para iniciar",
+            filetypes=[("Arquivos executáveis", "*.exe;*.app;*")]
+        )
+        
+        if browser_path:
+            if self.pomodoro_timer.website_manager.set_browser_path(browser_path):
+                messagebox.showinfo("Sucesso", f"Navegador selecionado: {os.path.basename(browser_path)}")
+            else:
+                messagebox.showerror("Erro", "Caminho do navegador inválido")
+                self.select_browser_on_startup()  # Tenta novamente se falhar
+        else:
+            response = messagebox.askretrycancel(
+                "Aviso", 
+                "Nenhum navegador foi selecionado. O bloqueio de sites não funcionará corretamente sem um navegador.\nDeseja tentar novamente?"
+            )
+            if response:
+                self.select_browser_on_startup()

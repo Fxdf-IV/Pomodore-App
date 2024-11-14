@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import messagebox, filedialog
 import subprocess
 import os
 import time
@@ -9,7 +7,7 @@ class WebsiteBlocker:
     def __init__(self):
         self.hosts_path = self.get_hosts_path()                     # Obtém o caminho do arquivo hosts
         self.redirect = "127.0.0.1"                                 # IP de redirecionamento
-        self.browser_choice = None
+        self.browser_path = None
         self.browser_closed = False
         self.browser_started = False
 
@@ -20,22 +18,18 @@ class WebsiteBlocker:
         if os.name == 'posix':                                      # Sistemas Linux ou Mac
             return "/etc/hosts"
 
-    def ask_for_browser(self):
-        root = tk.Tk()
-        root.withdraw()                                             # Não mostrar a janela principal do Tkinter
+    def is_browser_set(self):
+        return self.browser_path is not None and os.path.exists(self.browser_path)
 
-        print("Selecione o executável do seu navegador:")           # Abre uma janela para o usuário escolher o executável do navegador
-        browser_path = filedialog.askopenfilename(title="Selecione o navegador", filetypes=[("Arquivos executáveis", "*.exe;*.app;*")])
-
-        if browser_path:
-            self.browser_choice = browser_path                      # Armazena o caminho do arquivo do navegador
-            print(f"Navegador selecionado: {os.path.basename(self.browser_choice)}")
-        else:
-            print("Nenhum navegador foi selecionado.")
+    def set_browser_path(self, browser_path):
+        if browser_path and os.path.exists(browser_path):
+            self.browser_path = browser_path
+            return True
+        return False
 
     def generate_browser_variations(self):
-        if self.browser_choice:
-            base_name = os.path.basename(self.browser_choice).lower()       # Obtem o nome do arquivo do navegador a partir do caminho completo
+        if self.browser_path:
+            base_name = os.path.basename(self.browser_path).lower()       # Obtem o nome do arquivo do navegador a partir do caminho completo
             variations = [base_name]
 
             variations.append(base_name.replace(".exe", ""))
@@ -54,7 +48,7 @@ class WebsiteBlocker:
                     try:
                         if proc.info['pid'] not in closed_processes:
                             print(proc.info)
-                            if os.path.basename(self.browser_choice).lower() in proc.info['name'].lower():
+                            if os.path.basename(self.browser_path).lower() in proc.info['name'].lower():
                                 print(f"Fechando o processo {proc.info['name']} (PID: {proc.info['pid']})...")
                                 proc.terminate()
                                 proc.wait()
@@ -67,20 +61,20 @@ class WebsiteBlocker:
                         print(f"Erro ao tentar fechar o processo: {e}")
 
     def start_browser(self):
-            if not os.path.isfile(self.browser_choice):
-                print(f"Erro: O navegador {os.path.basename(self.browser_choice)} não foi encontrado no caminho especificado.")
+            if not os.path.isfile(self.browser_path):
+                print(f"Erro: O navegador {os.path.basename(self.browser_path)} não foi encontrado no caminho especificado.")
                 return
 
-            print(f"Iniciando o processo para o navegador: {self.browser_choice}")
-            process = subprocess.Popen([self.browser_choice], shell=True)
+            print(f"Iniciando o processo para o navegador: {self.browser_path}")
+            process = subprocess.Popen([self.browser_path], shell=True)
             time.sleep(1)
 
             if process.poll() is None:
                 self.browser_closed = False
-                print(f"Navegador {os.path.basename(self.browser_choice)} reiniciado com sucesso.")
+                print(f"Navegador {os.path.basename(self.browser_path)} reiniciado com sucesso.")
                 
             else:
-                print(f"Erro ao tentar reiniciar o navegador: {os.path.basename(self.browser_choice)}.")
+                print(f"Erro ao tentar reiniciar o navegador: {os.path.basename(self.browser_path)}.")
 
             if not self.browser_closed:
                 print("Navegador não foi fechado corretamente. Não reiniciando.")
@@ -145,4 +139,4 @@ class WebsiteBlocker:
                     print(f"Site desbloqueado: {line.strip()}")
 
         self.clear_dns_cache()
-        print(f"Caminho do navegador: {self.browser_choice}")
+        print(f"Caminho do navegador: {self.browser_path}")
