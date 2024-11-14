@@ -34,6 +34,11 @@ class PomodoroTimer:
             self.block.block_websites(self.sites)
             self.block.start_browser()
 
+    def cleanup(self):
+        """Limpa recursos e desbloqueia sites quando o programa é fechado"""
+        self.block.unblock_websites(self.sites)
+        self.block.clear_dns_cache()
+
     # Converte o tempo de segundos para o formato MM:SS.
     def format_time_to_display(self, total_seconds):
         minutes = total_seconds  // 60

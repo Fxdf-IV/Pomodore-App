@@ -14,6 +14,9 @@ class PomodoroTimerUI:
         # Recebe todo retorno da classe PomodoroTimer (iniciando o timer)
         self.pomodoro_timer = PomodoroTimer()
 
+        # Configura o evento de fechamento da janela
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
         self.selected_option = 0
         
         self.work_duration = f"{00:02}"
@@ -329,3 +332,8 @@ class PomodoroTimerUI:
 
         if not event.char.isdigit():
             return "break"
+
+    def on_closing(self):
+        """Manipula o evento de fechamento da janela"""
+        self.pomodoro_timer.cleanup()
+        self.root.destroy()
