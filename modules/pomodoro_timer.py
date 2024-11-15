@@ -19,6 +19,7 @@ class PomodoroTimer:
         self.is_timer_running = False              # Controla o estado do timer (False = parado)
         self.current_time = self.work_duration     # Tempo atual (inicia com tempo de foco selecionado)
         self.cycle_message = "Foco total! É hora de trabalhar."
+        self.cycle_counter = 0                     # Contador de ciclos completados
 
         self.website_manager = WebsiteBlocker()
         self.sites = []
@@ -30,7 +31,6 @@ class PomodoroTimer:
         else:
             self.website_manager.clear_dns_cache()
             self.website_manager.close_browser()
-            time.sleep(1)
             self.website_manager.block_websites(self.sites)
             self.website_manager.start_browser()
 
@@ -55,6 +55,8 @@ class PomodoroTimer:
     def start_timer(self):
         if not self.is_timer_running:
             self.is_timer_running = True
+            if self.is_focus_timer_active and self.current_cycle == self.total_cycles:
+                self.cycle_counter += 1
             self.update_timer()
             self.block_unblock_websites()
         
@@ -71,6 +73,7 @@ class PomodoroTimer:
         self.current_time = self.work_duration
         self.website_manager.unblock_websites(self.sites)
         self.cycle_message = "Foco total! É hora de trabalhar."
+        self.cycle_counter = 0
     
     # Atualiza o tempo restante a cada segundo e gerencia as trocas de ciclos.
     def update_timer(self):
@@ -78,48 +81,50 @@ class PomodoroTimer:
             if self.current_time > 0 :
                 self.current_time -= 1
             else:
-                time.sleep(3)
                 self.handle_cycle_switch()             # Quando o tempo termina, completa o ciclo de foco
 
     # Gerencia a mudança entre ciclos de pausas curtas e longas.
     def handle_cycle_switch(self):
         print("PAUSA CURTA INICIAL ", self.short_break_count)
         
-        if     self.current_cycle == 1 :
-                self.current_time = self.long_break_duration
-                self.cycle_message = "Pausa longa! Descanse bem e recarregue suas energias."
-                self.is_long_break_timer_active = True
-                self.is_focus_timer_active = False
-                self.is_short_break_timer_active = False          
-                self.current_cycle = self.total_cycles + 1
-                self.short_break_count = self.total_cycles
-                print("PAUSA LONGA __________")
+        if self.current_cycle == 1:
+            self.current_time = self.long_break_duration
+            self.cycle_message = "Pausa longa! Descanse bem e recarregue suas energias."
+            self.is_long_break_timer_active = True
+            self.is_focus_timer_active = False
+            self.is_short_break_timer_active = False          
+            self.current_cycle = self.total_cycles + 1
+            self.short_break_count = self.total_cycles
+            self.cycle_counter = 0
+            print("PAUSA LONGA __________")
 
-        elif   self.current_cycle == self.short_break_count :
-                self.current_time = self.short_break_duration
-                self.cycle_message = "Pausa curta! Aproveite um momento para relaxar."                
-                self.is_short_break_timer_active = True
-                self.is_focus_timer_active = False
-                self.is_long_break_timer_active = False
-                self.short_break_count -= 1                
-                print("Pausa curta ", self.short_break_count)
+        elif self.current_cycle == self.short_break_count:
+            self.current_time = self.short_break_duration
+            self.cycle_message = "Pausa curta! Aproveite um momento para relaxar."                
+            self.is_short_break_timer_active = True
+            self.is_focus_timer_active = False
+            self.is_long_break_timer_active = False
+            self.short_break_count -= 1
+            print("Pausa curta ", self.short_break_count)
                 
         else:
-                self.start_focus_cycle()
+            self.start_focus_cycle()
 
         self.block_unblock_websites()
 
     # Gerencia a mudança entre ciclos de foco.
     def start_focus_cycle(self):
         print("CICLO INICIAL ", self.current_cycle)
-        if     self.is_short_break_timer_active == True or self.is_long_break_timer_active == True :
-                self.current_time = self.work_duration
-                self.cycle_message = "Foco total! É hora de trabalhar."                        
-                self.is_short_break_timer_active = False
-                self.is_long_break_timer_active = False
-                self.is_focus_timer_active = True
-                self.current_cycle -= 1
-                print("Ciclo atual ", self.current_cycle)
+        if self.is_short_break_timer_active == True or self.is_long_break_timer_active == True:
+            self.current_time = self.work_duration
+            self.cycle_message = "Foco total! É hora de trabalhar."                        
+            self.is_short_break_timer_active = False
+            self.is_long_break_timer_active = False
+            self.is_focus_timer_active = True
+            self.current_cycle -= 1
+            if self.current_cycle > 0:
+                self.cycle_counter += 1 
+            print("Ciclo atual ", self.current_cycle)
 
     # Chama a entrada do usuário, e armazena os valores retornados
     def configure_timer_settings(self, work_duration, short_break_duration, long_break_duration, cycles_entry):
@@ -133,17 +138,17 @@ class PomodoroTimer:
         match option:
             case 1:
                 self.title = "Pomodoro Clássico"
-                self.work_duration = 2
-                self.short_break_duration = 2
-                self.long_break_duration = 2
+                self.work_duration = 25
+                self.short_break_duration = 5
+                self.long_break_duration = 15
                 self.total_cycles = 4
                 self.description = ("Esta é a abordagem original do método Pomodoro, que consiste em ciclos de 25 minutos de trabalho concentrado. A pausa curta de 5 minutos permite relaxar e recarregar as energias, enquanto a pausa longa, após quatro ciclos, oferece um tempo maior para descansar e refletir sobre o progresso feito, ajudando a evitar a fadiga mental. Tempo de foco: 01h40 (4 ciclos de 25 minutos). Tempo total de descanso: 00h40 (3 pausas curtas de 5 minutos + 1 pausa longa de 15 minutos).")
 
             case 2:
                 self.title = "Pomodoro 60/15"
-                self.work_duration = 1
-                self.short_break_duration = 1
-                self.long_break_duration = 1
+                self.work_duration = 60
+                self.short_break_duration = 15
+                self.long_break_duration = 30
                 self.total_cycles = 4
                 self.description = ("Neste método, você se dedica a 60 minutos de trabalho focado, seguido de uma pausa de 15 minutos. A pausa longa após quatro ciclos é de 30 minutos, permitindo um descanso mais profundo. É adequado para projetos que exigem longos períodos de atenção e concentração. Tempo de foco: 04h00 (4 ciclos de 60 minutos). Tempo total de descanso: 01h15 (3 pausas curtas de 15 minutos + 1 pausa longa de 30 minutos).")
 
@@ -174,9 +179,10 @@ class PomodoroTimer:
             case 6:
                 self.title = "Pomodoro Flexível"
                 self.description = "Pomodoro Flexível: Durações personalizadas."
-                
+            
         # Defina configurações adicionais para outras opções de Pomodoro
         self.current_cycle = self.total_cycles
+        self.short_break_count = self.total_cycles
         self.current_time = self.work_duration  # Atualiza o tempo de trabalho inicial
         self.is_timer_running = False
-
+        self.cycle_counter = 0  # Reseta o contador ao mudar de opção

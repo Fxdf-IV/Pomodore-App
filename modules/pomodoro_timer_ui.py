@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox, OptionMenu, Button, filedialog
 from pomodoro_timer import PomodoroTimer
 from website_manager_ui import WebsiteManagerWindow
+from settings_manager import SettingsManager
+from settings_manager_ui import SettingsWindow
 import os
 
 # Configuração Front-end da janela principal
@@ -10,10 +12,13 @@ class PomodoroTimerUI:
         # Configuração da janela principal
         self.root = root
         self.root.title("Pomodoro Timer")
-        self.root.geometry("450x825")
+        self.root.geometry("650x825")
 
         # Recebe todo retorno da classe PomodoroTimer (iniciando o timer)
         self.pomodoro_timer = PomodoroTimer()
+
+        # Recebe todo retorno da classe WebsiteBlocker
+        self.settings_manager = SettingsManager()
 
         # Configura o evento de fechamento da janela
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -47,6 +52,10 @@ class PomodoroTimerUI:
         self.title_label = tk.Label(root, text=self.get_title_text(), font=("Helvetica", 14))
         self.title_label.pack(pady=10)
 
+        # Adiciona o contador de ciclos
+        self.cycle_counter_label = tk.Label(root, text=self.get_cycle_counter_text(), font=("Helvetica", 12))
+        self.cycle_counter_label.pack(pady=5)
+
         self.message_label = tk.Label(root, text=self.get_cycle_message_text(), font=("Helvetica", 10))
         self.message_label.pack(pady=10)
 
@@ -68,6 +77,10 @@ class PomodoroTimerUI:
         # Botão para gerenciar sites bloqueados
         self.manage_sites_button = tk.Button(root, text="Gerenciar Sites", command=self.open_website_manager)
         self.manage_sites_button.pack(side=tk.LEFT, padx=10)
+
+        # Botão para configurações
+        self.settings_button = tk.Button(root, text="Configurações", command=self.open_settings)
+        self.settings_button.pack(side=tk.LEFT, padx=10)
 
         self.send_custom_values_button = tk.Button(root, text="Send", command=self.send_custom_values_ui)
 
@@ -240,6 +253,9 @@ class PomodoroTimerUI:
     def get_title_text(self):
         return self.pomodoro_timer.title
 
+    def get_cycle_counter_text(self):
+        return f"Ciclos: {self.pomodoro_timer.cycle_counter}"
+
     def display_selected_option_description(self):
         option = self.current_option_selection.get()
         self.pomodoro_timer.timer_options(option)
@@ -248,6 +264,9 @@ class PomodoroTimerUI:
 
     def open_website_manager(self):
         website_manager_window = WebsiteManagerWindow(self.root, self.pomodoro_timer.sites, self.pomodoro_timer.website_manager)
+
+    def open_settings(self):
+        SettingsWindow(self.root, self.settings_manager)
 
     def fill_timer_settings_fields(self):
         self.update_timer_display()
@@ -287,10 +306,17 @@ class PomodoroTimerUI:
     def update_timer_display(self):
         self.reset_display_interface()
         self.message_label.config(text=self.get_cycle_message_text())
+        self.cycle_counter_label.config(text=self.get_cycle_counter_text())
 
-        if  self.pomodoro_timer.is_timer_running:
-                self.root.after(1000, self.update_timer_display)         # Chama novamente após 1 segundo
+        if self.pomodoro_timer.is_timer_running:
+            if self.pomodoro_timer.current_time == 0:
+                # Pausa antes de mudar de ciclo
+                self.root.after(3000, self.pomodoro_timer.handle_cycle_switch)
+                # Atualiza o display após a transição
+                self.root.after(3100, self.update_timer_display)
+            else:
                 self.pomodoro_timer.update_timer()
+                self.root.after(1000, self.update_timer_display)         # Chama novamente após 1 segundo
 
     def reset_display_interface(self):
         

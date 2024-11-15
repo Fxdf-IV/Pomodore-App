@@ -2,6 +2,8 @@ import subprocess
 import os
 import time
 import psutil
+from settings_manager import SettingsManager
+from settings_manager_ui import SettingsWindow
 
 class WebsiteBlocker:
     def __init__(self):
@@ -10,6 +12,7 @@ class WebsiteBlocker:
         self.browser_path = None
         self.browser_closed = False
         self.browser_started = False
+        self.settings_manager = SettingsManager()
 
     def get_hosts_path(self):
         if os.name == 'nt':                                         # Sistema operacional Windows
@@ -42,6 +45,8 @@ class WebsiteBlocker:
     def close_browser(self):
         closed_processes = []                                               # Lista para armazenar processos já fechados
 
+        if self.settings_manager.get_setting('close_browser') == False:
+            return
         for proc in psutil.process_iter(['pid', 'name']):                   # Lista os processos em execução no sistema
             for variation in self.generate_browser_variations():            # Verificar se o nome do processo contém uma das variações geradas
                 if variation in proc.info['name'].lower():
@@ -61,6 +66,8 @@ class WebsiteBlocker:
                         print(f"Erro ao tentar fechar o processo: {e}")
 
     def start_browser(self):
+        if self.settings_manager.get_setting('auto_start_browser') == False: 
+            return
             if not os.path.isfile(self.browser_path):
                 print(f"Erro: O navegador {os.path.basename(self.browser_path)} não foi encontrado no caminho especificado.")
                 return
@@ -80,16 +87,17 @@ class WebsiteBlocker:
                 print("Navegador não foi fechado corretamente. Não reiniciando.")
 
     def clear_dns_cache(self):
-        if os.name == 'nt':     # Windows
-            subprocess.run(["ipconfig", "/flushdns"], check=True)
-            print("Cache DNS limpo com sucesso.")
+        if self.settings_manager.get_setting('close_browser') == False:
+            if os.name == 'nt':     # Windows
+                subprocess.run(["ipconfig", "/flushdns"], check=True)
+                print("Cache DNS limpo com sucesso.")
 
-        if os.name == 'posix':  # Linux ou Mac                     # O comando varia entre distribuições e versões do macOS
-                                                                
-            subprocess.run(["sudo", "systemd-resolve", "--flush-caches"], check=True)
-            subprocess.run(["sudo", "killall", "-HUP", "mDNSResponder"], check=True)
-            subprocess.run(["sudo", "dscacheutil", "-flushcache"], check=True)
-            print("Cache DNS limpo com sucesso")
+            if os.name == 'posix':  # Linux ou Mac                     # O comando varia entre distribuições e versões do macOS
+                                                                    
+                subprocess.run(["sudo", "systemd-resolve", "--flush-caches"], check=True)
+                subprocess.run(["sudo", "killall", "-HUP", "mDNSResponder"], check=True)
+                subprocess.run(["sudo", "dscacheutil", "-flushcache"], check=True)
+                print("Cache DNS limpo com sucesso")
 
     def generate_domain_variations(self, site):
         variations = []

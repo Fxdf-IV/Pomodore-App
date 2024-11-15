@@ -1,0 +1,6 @@
+{
+    "transition_time": 3,
+    "show_cycle_count": true,
+    "close_browser": false,
+    "auto_start_browser": false
+}
