@@ -68,23 +68,23 @@ class WebsiteBlocker:
     def start_browser(self):
         if self.settings_manager.get_setting('auto_start_browser') == False: 
             return
-            if not os.path.isfile(self.browser_path):
-                print(f"Erro: O navegador {os.path.basename(self.browser_path)} não foi encontrado no caminho especificado.")
-                return
+        if not os.path.isfile(self.browser_path):
+            print(f"Erro: O navegador {os.path.basename(self.browser_path)} não foi encontrado no caminho especificado.")
+            return
 
-            print(f"Iniciando o processo para o navegador: {self.browser_path}")
-            process = subprocess.Popen([self.browser_path], shell=True)
-            time.sleep(1)
+        print(f"Iniciando o processo para o navegador: {self.browser_path}")
+        process = subprocess.Popen([self.browser_path], shell=True)
+        time.sleep(1)
 
-            if process.poll() is None:
-                self.browser_closed = False
-                print(f"Navegador {os.path.basename(self.browser_path)} reiniciado com sucesso.")
-                
-            else:
-                print(f"Erro ao tentar reiniciar o navegador: {os.path.basename(self.browser_path)}.")
+        if process.poll() is None:
+            self.browser_closed = False
+            print(f"Navegador {os.path.basename(self.browser_path)} reiniciado com sucesso.")
+            
+        else:
+            print(f"Erro ao tentar reiniciar o navegador: {os.path.basename(self.browser_path)}.")
 
-            if not self.browser_closed:
-                print("Navegador não foi fechado corretamente. Não reiniciando.")
+        if not self.browser_closed:
+            print("Navegador não foi fechado corretamente. Não reiniciando.")
 
     def clear_dns_cache(self):
         if self.settings_manager.get_setting('close_browser') == False:
