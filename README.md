@@ -1,4 +1,4 @@
-# Pomodoro App
+# Pomodoro App (Prototipo)
 
 ## Visão Geral
 O **Pomodoro App** é uma ferramenta de gerenciamento de tempo que utiliza a técnica Pomodoro para ajudar os usuários a aumentar sua produtividade. O aplicativo permite que os usuários trabalhem em ciclos de tempo, intercalando períodos de trabalho focado com breves pausas, enquanto bloqueia distrações online.
