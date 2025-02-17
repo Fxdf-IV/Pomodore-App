@@ -9,7 +9,7 @@ class PomodoroTimer:
         self.short_break_duration = 0 
         self.long_break_duration = 0 
         self.total_cycles = 0
-        self.description = ""
+        self.description = "Vamos começar?"
         
         self.current_cycle = self.total_cycles
         self.short_break_count = self.total_cycles   
@@ -18,7 +18,7 @@ class PomodoroTimer:
         self.is_focus_timer_active = True
         self.is_timer_running = False              # Controla o estado do timer (False = parado)
         self.current_time = self.work_duration     # Tempo atual (inicia com tempo de foco selecionado)
-        self.cycle_message = "Foco total! É hora de trabalhar."
+        self.cycle_message = ""
         self.cycle_counter = 0                     # Contador de ciclos completados
 
         self.website_manager = WebsiteBlocker()
