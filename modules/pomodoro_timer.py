@@ -1,4 +1,3 @@
-import time
 from website_manager import WebsiteBlocker
 
 # Configuração Back-end da janela principal
